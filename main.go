@@ -1,9 +1,10 @@
 package main
 
 import (
+	_ "embed"
 	"encoding/csv"
 	"fmt"
-	"os"
+	"strings"
 	"time"
 )
 
@@ -12,20 +13,16 @@ var (
 	time_left        time.Duration
 )
 
+//go:embed data/kosovo-prayer-times.csv
+var prayer_times_csv string
+
 func main() {
 	time_now := time.Now()
 	today := time_now.Format("2006-01-02")
 	current_time_str := time_now.Format("15:04")
 	parsed_current, _ := time.Parse("15:04", current_time_str)
 
-	file, err := os.Open("data/kosovo-prayer-times.csv")
-	if err != nil {
-		fmt.Println("Error: ", err)
-		return
-	}
-	defer file.Close()
-
-	reader := csv.NewReader(file)
+	reader := csv.NewReader(strings.NewReader(prayer_times_csv))
 	records, err := reader.ReadAll()
 	if err != nil {
 		fmt.Println("Error: ", err)
